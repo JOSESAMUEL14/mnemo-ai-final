@@ -8,16 +8,8 @@ import random
 import os
 import requests
 
-# ============================================
-# FORCE COGNEE TO USE CLOUD - SIMPLE VERSION
-# ============================================
-os.environ["COGNEE_SERVICE_URL"] = "https://tenant-cb09d8ab-4a90-4d06-b28a-289a39c206b7.aws.cognee.ai"
-os.environ["COGNEE_API_KEY"] = "295367ceb914cc29c7adaa0cffa86b994dc04f48202b7736bae49c281f2dcff4"
-os.environ["COGNEE_TENANT_ID"] = "cb09d8ab-4a90-4d06-b28a-289a39c206b7"
-os.environ["ENABLE_BACKEND_ACCESS_CONTROL"] = "false"
-os.environ["CACHING"] = "false"
-
-print("✅ Cognee environment variables set!")
+# Cognee will use local SQLite database
+print("✅ Cognee using local SQLite database")
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
