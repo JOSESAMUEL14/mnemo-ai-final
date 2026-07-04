@@ -16,6 +16,26 @@ os.environ["COGNEE_TENANT_ID"] = "cb09d8ab-4a90-4d06-b28a-289a39c206b7"
 os.environ["ENABLE_BACKEND_ACCESS_CONTROL"] = "false"
 os.environ["CACHING"] = "false"
 
+# ============================================
+# FORCE COGNEE TO USE CLOUD - HARD OVERRIDE
+# ============================================
+import cognee
+from cognee import Cognee
+
+# Hard override - force Cognee to use Cloud
+cognee_config = {
+    "service_url": "https://tenant-cb09d8ab-4a90-4d06-b28a-289a39c206b7.aws.cognee.ai",
+    "api_key": "295367ceb914cc29c7adaa0cffa86b994dc04f48202b7736bae49c281f2dcff4",
+    "tenant_id": "cb09d8ab-4a90-4d06-b28a-289a39c206b7"
+}
+
+# Set Cognee configuration directly
+try:
+    cognee.configure(**cognee_config)
+    print("✅ Cognee configured for Cloud!")
+except Exception as e:
+    print(f"❌ Cognee config error: {e}")
+
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
