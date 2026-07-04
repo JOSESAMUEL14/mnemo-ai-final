@@ -1,0 +1,18 @@
+# Cognee Database Files
+cognee_system/
+data_storage/
+*.db
+*.db-shm
+*.db-wal
+*.lance
+*.manifest
+*.txn
+*.shadow
+*.checkpoint
+
+# Environment files
+.env
+
+# OS files
+.DS_Store
+Thumbs.db

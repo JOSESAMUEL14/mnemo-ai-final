@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mnemo AI — Timeline</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+<script>
+  // Critical: Theme initialization before paint
+  (function() {
+    const savedTheme = localStorage.getItem('mnemo_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  })();
+</script>
+
+<style>
+:root {
+  --bg-main: #07071a;
+  --bg-sidebar: rgba(10,10,22,0.98);
+  --bg-topbar: rgba(8,8,20,0.95);
+  --bg-panel: rgba(255,255,255,0.03);
+  --bg-card: rgba(255,255,255,0.04);
+  --border-card: rgba(255,255,255,0.07);
+  --border-subtle: rgba(255,255,255,0.05);
+  --border-panel: rgba(255,255,255,0.07);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255,255,255,0.6);
+  --text-muted: rgba(255,255,255,0.35);
+  --text-ghost: rgba(255,255,255,0.2);
+  --accent-purple: #7c3aed;
+  --accent-purple-light: #a78bfa;
+  --accent-blue: #3b82f6;
+}
+
+[data-theme="light"] {
+  --bg-main: #f5f5fa;
+  --bg-sidebar: rgba(240,240,245,0.98);
+  --bg-topbar: rgba(245,245,250,0.95);
+  --bg-panel: rgba(0,0,0,0.02);
+  --bg-card: rgba(0,0,0,0.03);
+  --border-card: rgba(0,0,0,0.08);
+  --border-subtle: rgba(0,0,0,0.06);
+  --border-panel: rgba(0,0,0,0.08);
+  --text-primary: #1a1a2e;
+  --text-secondary: rgba(26,26,46,0.6);
+  --text-muted: rgba(26,26,46,0.45);
+  --text-ghost: rgba(26,26,46,0.25);
+  --accent-purple: #7c3aed;
+  --accent-purple-light: #6d28d9;
+  --accent-blue: #3b82f6;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg-main);color:var(--text-primary);min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{background:var(--bg-sidebar);border-right:1px solid var(--border-subtle);padding:16px 10px;display:flex;flex-direction:column;gap:2px;position:fixed;top:0;left:0;bottom:0;width:200px;overflow-y:auto;z-index:50}
+.sb-logo{display:flex;align-items:center;gap:8px;padding:10px;margin-bottom:16px}
+.sb-logo-icon{position:relative;width:32px;height:32px;border-radius:10px;background:var(--bg-main);border:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-icon::before{content:'';position:absolute;width:20px;height:20px;border:1px dashed var(--accent-purple-light);opacity:0.4;border-radius:50%}
+.sb-logo-icon::after{content:'';position:absolute;width:8px;height:8px;background:var(--accent-purple-light);border-radius:50%;box-shadow:0 0 8px var(--accent-purple)}
+.sb-logo-text{font-size:14px;font-weight:500;color:var(--text-primary)}
+.sb-logo-sub{font-size:9px;color:var(--text-muted)}
+.sb-section{font-size:9px;color:var(--text-ghost);padding:10px 10px 3px;letter-spacing:0.08em;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;cursor:pointer;font-size:12px;color:var(--text-secondary);transition:all 0.15s;text-decoration:none;position:relative}
+.sb-item:hover{background:var(--bg-card);color:var(--text-primary)}
+.sb-item.active{background:rgba(124,58,237,0.15);color:var(--accent-purple-light)}
+.sb-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:14px;background:var(--accent-purple);border-radius:0 2px 2px 0}
+.sb-item i{font-size:15px}
+.sb-badge{margin-left:auto;background:rgba(124,58,237,0.3);color:var(--accent-purple-light);font-size:9px;padding:1px 5px;border-radius:8px}
+.sb-footer{margin-top:auto;padding:10px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.15);border-radius:10px}
+.sb-footer-label{font-size:10px;color:var(--text-secondary);margin-bottom:2px}
+.sb-footer-val{font-size:12px;color:var(--accent-purple-light);font-weight:500}
+.sb-mem-bar{height:3px;background:var(--border-subtle);border-radius:2px;margin-top:6px}
+.sb-mem-fill{height:100%;width:0%;background:linear-gradient(to right,var(--accent-purple),var(--accent-blue));border-radius:2px;transition:width 1s ease}
+
+/* MAIN LAYOUT */
+.main{margin-left:200px;display:flex;flex-direction:column;min-height:100vh}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border-subtle);background:var(--bg-topbar);position:sticky;top:0;z-index:40;backdrop-filter:blur(20px);flex-wrap:wrap;gap:10px}
+.topbar-left h2{font-size:14px;font-weight:500;color:var(--text-primary)}
+.topbar-left p{font-size:11px;color:var(--text-muted);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.top-chip{display:flex;align-items:center;gap:5px;background:var(--bg-card);border:1px solid var(--border-card);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--text-secondary);cursor:pointer;transition:all 0.2s;font-family:inherit}
+.top-chip:hover{background:var(--border-card);color:var(--text-primary)}
+
+.view-toggle{display:flex;background:var(--bg-card);border:1px solid var(--border-card);border-radius:20px;padding:2px;gap:2px}
+.view-toggle-btn{padding:5px 12px;border-radius:18px;font-size:11px;color:var(--text-muted);cursor:pointer;border:none;background:none;font-family:inherit;transition:all 0.2s}
+.view-toggle-btn.active{background:rgba(124,58,237,0.25);color:var(--accent-purple-light)}
+
+/* CONTENT */
+.content{padding:24px 24px 40px;display:flex;flex-direction:column;gap:32px;flex:1;max-width:880px;margin:0 auto;width:100%}
+
+.section-head{margin-bottom:4px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.section-head h3{font-size:15px;font-weight:500;color:var(--text-primary)}
+.section-head p{font-size:11px;color:var(--text-muted);margin-top:2px}
+
+/* EXPORT PDF BUTTON */
+.export-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg-card);border:1px solid var(--border-card);color:var(--text-secondary);padding:7px 14px;border-radius:10px;font-size:11px;font-weight:500;cursor:pointer;transition:all 0.2s;font-family:inherit;white-space:nowrap}
+.export-btn:hover{background:rgba(124,58,237,0.15);border-color:rgba(124,58,237,0.3);color:var(--accent-purple-light)}
+.export-btn i{font-size:13px}
+
+/* TIMELINE */
+.timeline-wrap{position:relative;padding:10px 0}
+.timeline-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(124,58,237,0.3);transform:translateX(-0.5px)}
+
+.tl-entry{position:relative;display:flex;margin-bottom:28px;width:100%}
+.tl-entry.left{justify-content:flex-start}
+.tl-entry.right{justify-content:flex-end}
+
+.tl-dot{position:absolute;left:50%;top:14px;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;border:2px solid var(--bg-main);z-index:2;box-shadow:0 0 0 3px rgba(124,58,237,0.15)}
+
+.tl-card{width:calc(50% - 36px);background:var(--bg-panel);border:1px solid var(--border-panel);border-radius:14px;padding:16px 18px;transition:all 0.2s;animation:fadeIn 0.3s ease}
+.tl-card:hover{border-color:rgba(124,58,237,0.25);background:var(--bg-card)}
+
+.tl-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.tl-emoji{font-size:16px}
+.tl-date{font-size:11px;color:var(--text-muted)}
+.tl-preview{font-size:12px;color:var(--text-secondary);line-height:1.6}
+.tl-full{display:none;font-size:12px;color:var(--text-secondary);line-height:1.6;white-space:pre-wrap}
+.tl-full.show{display:block}
+.tl-preview.hidden-when-expanded{display:none}
+.tl-expand-btn{margin-top:8px;font-size:10px;color:var(--accent-purple-light);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;display:inline-flex;align-items:center;gap:3px}
+.tl-expand-btn i{font-size:11px;transition:transform 0.2s}
+.tl-expand-btn.open i{transform:rotate(180deg)}
+
+@media (max-width:700px){
+  .timeline-line{left:18px}
+  .tl-entry.left, .tl-entry.right{justify-content:flex-start}
+  .tl-dot{left:18px}
+  .tl-card{width:calc(100% - 48px);margin-left:48px}
+}
+
+/* EMPTY STATES */
+.empty-state-big{text-align:center;padding:50px 20px;color:var(--text-muted);font-size:13px}
+.empty-state-big i{font-size:36px;display:block;margin-bottom:14px;color:rgba(124,58,237,0.35)}
+.empty-state-big .btn{margin-top:16px}
+
+.empty-state-small{text-align:center;padding:30px 16px;color:var(--text-muted);font-size:12px}
+.empty-state-small i{font-size:26px;display:block;margin-bottom:8px;color:rgba(124,58,237,0.3)}
+
+.btn{padding:10px 18px;border-radius:10px;font-size:12px;cursor:pointer;border:none;font-weight:500;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;font-family:inherit;text-decoration:none}
+.btn.primary{background:linear-gradient(135deg,var(--accent-purple),var(--accent-blue));color:#fff}
+.btn.primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,58,237,0.3)}
+
+/* LIFE CHAPTERS */
+.chapters-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:760px){.chapters-grid{grid-template-columns:1fr}}
+
+.chapter-card{background:var(--bg-panel);border:1px solid var(--border-panel);border-radius:14px;padding:18px;transition:all 0.2s}
+.chapter-card:hover{border-color:rgba(124,58,237,0.25);transform:translateY(-2px)}
+.chapter-icon{width:32px;height:32px;border-radius:10px;background:rgba(124,58,237,0.15);color:var(--accent-purple-light);display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:12px}
+.chapter-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:4px}
+.chapter-range{font-size:10px;color:var(--text-muted);margin-bottom:10px}
+.chapter-summary{font-size:11px;color:var(--text-secondary);line-height:1.6;margin-bottom:12px}
+.chapter-count{font-size:10px;color:#60a5fa;display:flex;align-items:center;gap:4px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-icon"></div>
+    <div>
+      <div class="sb-logo-text">Mnemo AI</div>
+      <div class="sb-logo-sub">Life Intelligence</div>
+    </div>
+  </div>
+
+  <div class="sb-section">Main</div>
+  <a href="/dashboard" class="sb-item">
+    <i class="ti ti-layout-dashboard"></i> Dashboard
+  </a>
+  <a href="/chat" class="sb-item">
+    <i class="ti ti-message-circle"></i> Chat
+    <span class="sb-badge">AI</span>
+  </a>
+  <a href="/journal" class="sb-item">
+    <i class="ti ti-notebook"></i> Journal
+  </a>
+  <a href="/insights" class="sb-item">
+    <i class="ti ti-chart-line"></i> Insights
+  </a>
+
+  <div class="sb-section">Memory</div>
+  <a href="/goals" class="sb-item">
+    <i class="ti ti-target"></i> Goals
+  </a>
+  <a href="/timeline" class="sb-item active">
+    <i class="ti ti-timeline"></i> Timeline
+  </a>
+  <a href="/future" class="sb-item">
+    <i class="ti ti-mail"></i> Future self
+  </a>
+  <a href="/forget" class="sb-item">
+    <i class="ti ti-trash"></i> Forget & heal
+  </a>
+  <a href="/wrapped" class="sb-item">
+    <i class="ti ti-gift"></i> Wrapped
+  </a>
+
+  <div class="sb-footer" style="margin-top:16px">
+    <div class="sb-footer-label">Memory active</div>
+    <div class="sb-footer-val" id="memCount">Loading...</div>
+    <div class="sb-mem-bar"><div class="sb-mem-fill" id="memBar"></div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Your Timeline</h2>
+      <p>The story of your journey</p>
+    </div>
+    <div class="topbar-right">
+      <!-- THEME TOGGLE BUTTON -->
+      <button onclick="toggleTheme()" class="top-chip" aria-label="Toggle Theme" style="background:transparent;cursor:pointer;padding:6px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;color:var(--text-primary);border:1px solid var(--border-card);">
+        <i id="theme-toggle-icon" class="ti ti-sun"></i>
+      </button>
+      <div class="view-toggle" id="viewToggle">
+        <button class="view-toggle-btn" data-view="week" onclick="setView('week', this)">Week</button>
+        <button class="view-toggle-btn active" data-view="month" onclick="setView('month', this)">Month</button>
+        <button class="view-toggle-btn" data-view="all" onclick="setView('all', this)">All time</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div>
+      <div class="section-head">
+        <div>
+          <h3>Memory Timeline</h3>
+          <p>Every entry, in order — your story so far</p>
+        </div>
+        <!-- PDF EXPORT BUTTON -->
+        <button class="export-btn" onclick="exportMemoriesAsPDF('My Life Story',
+          JSON.parse(localStorage.getItem('mnemo_journal_history') || '[]'))">
+          <i class="ti ti-download"></i> Download as PDF
+        </button>
+      </div>
+      <div class="timeline-wrap" id="timelineWrap" style="margin-top:18px">
+        <!-- populated by loadTimeline() -->
+      </div>
+    </div>
+
+    <div>
+      <div class="section-head">
+        <h3>Life Chapters</h3>
+        <p>Mnemo automatically groups your memories into chapters</p>
+      </div>
+      <div id="chaptersArea" style="margin-top:18px">
+        <!-- populated by loadChapters() -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ============================================
+// THEME TOGGLE ENGINE
+// ============================================
+function getTheme() {
+  return localStorage.getItem('mnemo_theme') || 'dark';
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('mnemo_theme', theme);
+  updateToggleIcon(theme);
+}
+
+function toggleTheme() {
+  const currentTheme = getTheme();
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  setTheme(newTheme);
+}
+
+function updateToggleIcon(theme) {
+  const icon = document.getElementById('theme-toggle-icon');
+  if (icon) {
+    icon.className = theme === 'dark' ? 'ti ti-sun' : 'ti ti-moon';
+  }
+}
+
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const currentTheme = getTheme();
+  updateToggleIcon(currentTheme);
+});
+
+// ============================================
+const MOOD_EMOJI = {
+  Happy:'😊', Determined:'😤', Sad:'😔', Anxious:'😰',
+  Tired:'😴', Energized:'🔥', Frustrated:'😤', Growing:'🌱',
+  Unspecified:'📝', Neutral:'📝'
+};
+const MOOD_COLOR = {
+  Happy:'#34d399', Determined:'#fbbf24', Sad:'#60a5fa', Anxious:'#f87171',
+  Tired:'#a78bfa', Energized:'#f59e0b', Frustrated:'#fb7185', Growing:'#34d399',
+  Unspecified:'#7c3aed', Neutral:'#7c3aed'
+};
+
+// VIEW TOGGLE (visual only, no real filtering yet)
+function setView(view, btn){
+  document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  localStorage.setItem('mnemo_timeline_view', view);
+}
+(function initView(){
+  const saved = localStorage.getItem('mnemo_timeline_view') || 'month';
+  document.querySelectorAll('.view-toggle-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === saved);
+  });
+})();
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+function formatDateLong(iso){
+  const d = new Date(iso);
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+/* ============================================================
+   TIMELINE — reads journal entries from localStorage
+   ============================================================ */
+function loadJournalHistory(){
+  try{
+    return JSON.parse(localStorage.getItem('mnemo_journal_history')) || [];
+  }catch(e){
+    return [];
+  }
+}
+
+function loadTimeline(){
+  const wrap = document.getElementById('timelineWrap');
+  const history = loadJournalHistory();
+
+  if(!history || history.length === 0){
+    wrap.innerHTML = `
+      <div class="empty-state-big">
+        <i class="ti ti-timeline"></i>
+        Your timeline is empty.<br>Write your first journal entry to begin your story.
+        <div>
+          <a href="/journal" class="btn primary">
+            <i class="ti ti-notebook"></i> Write your first entry
+          </a>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // newest first
+  const sorted = [...history].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  wrap.innerHTML = '<div class="timeline-line"></div>' + sorted.map((entry, idx) => {
+    const side = idx % 2 === 0 ? 'left' : 'right';
+    const mood = entry.mood || 'Unspecified';
+    const emoji = MOOD_EMOJI[mood] || '📝';
+    const color = MOOD_COLOR[mood] || '#7c3aed';
+    const dateLabel = entry.dateDisplay || formatDateLong(entry.date);
+    const preview = entry.text.length > 80 ? entry.text.slice(0, 80) + '…' : entry.text;
+    const needsExpand = entry.text.length > 80;
+
+    return `
+      <div class="tl-entry ${side}">
+        <div class="tl-dot" style="background:${color}"></div>
+        <div class="tl-card">
+          <div class="tl-head">
+            <span class="tl-emoji">${emoji}</span>
+            <span class="tl-date">${dateLabel}</span>
+          </div>
+          <div class="tl-preview" id="tl-preview-${idx}">${escapeHtml(preview)}</div>
+          <div class="tl-full" id="tl-full-${idx}">${escapeHtml(entry.text)}</div>
+          ${needsExpand ? `
+            <button class="tl-expand-btn" id="tl-btn-${idx}" onclick="expandEntry(${idx})">
+              <span id="tl-btn-label-${idx}">Read more</span> <i class="ti ti-chevron-down"></i>
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function expandEntry(idx){
+  const preview = document.getElementById('tl-preview-' + idx);
+  const full = document.getElementById('tl-full-' + idx);
+  const btn = document.getElementById('tl-btn-' + idx);
+  const label = document.getElementById('tl-btn-label-' + idx);
+
+  const isOpen = full.classList.contains('show');
+  if(isOpen){
+    full.classList.remove('show');
+    preview.classList.remove('hidden-when-expanded');
+    label.textContent = 'Read more';
+    btn.classList.remove('open');
+  } else {
+    full.classList.add('show');
+    preview.classList.add('hidden-when-expanded');
+    label.textContent = 'Show less';
+    btn.classList.add('open');
+  }
+}
+
+/* ============================================================
+   LIFE CHAPTERS — placeholder auto-generated style cards
+   ============================================================ */
+function loadChapters(){
+  const area = document.getElementById('chaptersArea');
+  const history = loadJournalHistory();
+
+  if(!history || history.length === 0){
+    area.innerHTML = `
+      <div class="empty-state-small">
+        <i class="ti ti-books"></i>
+        Chapters will appear automatically as you build memories.
+      </div>
+    `;
+    return;
+  }
+
+  const totalEntries = history.length;
+  const third = Math.max(1, Math.ceil(totalEntries / 3));
+
+  const chapters = [
+    {
+      icon: 'ti-sunrise',
+      title: 'The Beginning',
+      range: 'Early entries',
+      summary: 'Where your journey with Mnemo started — the first thoughts, hopes, and routines.',
+      count: Math.min(third, totalEntries)
+    },
+    {
+      icon: 'ti-bolt',
+      title: 'The Fight',
+      range: 'Middle entries',
+      summary: 'The harder stretch — challenges, frustration, and the moments that tested you.',
+      count: Math.min(third, Math.max(0, totalEntries - third))
+    },
+    {
+      icon: 'ti-flare',
+      title: 'The Breakthrough',
+      range: 'Recent entries',
+      summary: 'Momentum building — growth, clarity, and the wins still unfolding.',
+      count: Math.max(0, totalEntries - 2 * third)
+    }
+  ];
+
+  area.innerHTML = `
+    <div class="chapters-grid">
+      ${chapters.map(ch => `
+        <div class="chapter-card">
+          <div class="chapter-icon"><i class="ti ${ch.icon}"></i></div>
+          <div class="chapter-title">${ch.title}</div>
+          <div class="chapter-range">${ch.range}</div>
+          <div class="chapter-summary">${ch.summary}</div>
+          <div class="chapter-count"><i class="ti ti-notebook" style="font-size:11px"></i> ${ch.count} memor${ch.count === 1 ? 'y' : 'ies'}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// LOAD MEMORY COUNT (sidebar footer)
+async function loadStats(){
+  try{
+    const res = await fetch('/api/stats');
+    const data = await res.json();
+    const pct = Math.min((data.memories || 0) / 100 * 100, 100);
+    document.getElementById('memBar').style.width = pct + '%';
+    document.getElementById('memCount').textContent = (data.memories || 0) + ' memories';
+  }catch(e){
+    document.getElementById('memCount').textContent = '0 memories';
+  }
+}
+loadStats();
+
+// INIT
+loadTimeline();
+loadChapters();
+</script>
+
+<!-- PDF EXPORT — jsPDF MUST load before export.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="/static/js/export.js"></script>
+
+</body>
+</html>
