@@ -16,7 +16,8 @@ SESSION_ID = datetime.now().strftime("day_%Y_%m_%d")
 # ============================================
 # LLM CONFIGURATION - USING GROQ
 # ============================================
-GROQ_API_KEY = os.environ.get("LLM_API_KEY", "your-groq-api-key-here")GROQ_ENDPOINT = "https://api.groq.com/openai/v1"
+GROQ_API_KEY = os.environ.get("LLM_API_KEY", "your-groq-api-key-here")
+GROQ_ENDPOINT = "https://api.groq.com/openai/v1"
 
 # FOR GROQ DIRECT API CALLS
 GROQ_DIRECT_MODEL = "llama-3.3-70b-versatile"
