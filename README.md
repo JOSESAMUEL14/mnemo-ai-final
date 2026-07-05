@@ -5,10 +5,15 @@
 [![Cognee](https://img.shields.io/badge/Cognee-V1.2.2-purple?style=flat-square)](https://cognee.ai)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 [![Hackathon](https://img.shields.io/badge/WeMakeDevs%20x%20Cognee-Hackathon%202026-orange?style=flat-square)](https://wemakedevs.org)
+[![Deployed](https://img.shields.io/badge/Deployed-Render.com-blue?style=flat-square)](https://mnemo-ai.onrender.com)
 
 > *"The AI That Never Forgets You"*
 
 **Mnemo AI** is a complete Life Intelligence Platform that builds a permanent knowledge graph of your entire life journey — every struggle, every win, every dream — and fights for you **every single day**.
+
+## 🎯 **Live Demo**
+
+Try Mnemo AI now: **[https://mnemo-ai.onrender.com](https://mnemo-ai.onrender.com)**
 
 ---
 
@@ -48,6 +53,21 @@ Mnemo AI uses **Cognee V1's revolutionary memory layer** to build a living knowl
 ---
 
 ## 📸 Screenshots
+
+### Landing Page
+![Landing Page](screenshots/landing.png)
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Chat with Mnemo
+![Chat](screenshots/chat.png)
+
+### Daily Journal
+![Journal](screenshots/journal.png)
+
+### Life Insights
+![Insights](screenshots/insights.png)
 
 > *Screenshots coming soon - See demo video for full walkthrough*
 
@@ -157,7 +177,7 @@ await cognee.remember(
 
 # Time Capsule
 await cognee.remember(
-    "TIME CAPSULE 2026-08-01: Dear future me, today I started with nothing...",
+    "TIME CAPSULE 2026-08-01: Dear future me, today I started with nothing but determination...",
     dataset_name="main_dataset",
     session_id=SESSION_ID
 )
@@ -221,8 +241,8 @@ await cognee.forget(everything=True)
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/mnemo-ai.git
-cd mnemo-ai
+git clone https://github.com/JOSESAMUEL14/mnemo-ai-final.git
+cd mnemo-ai-final
 
 # 2. Install dependencies
 pip install -r requirements.txt
@@ -248,17 +268,9 @@ python app.py
 ### Environment Variables
 
 ```env
-COGNEE_API_KEY=your_cognee_key_here
-COGNEE_SERVICE_URL=https://api.cognee.ai
-LLM_PROVIDER=custom
-LLM_MODEL=openai/llama-3.3-70b-versatile
-LLM_API_KEY=your_groq_key_here
-LLM_ENDPOINT=https://api.groq.com/openai/v1
-EMBEDDING_PROVIDER=fastembed
-EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
+LLM_API_KEY=your_groq_api_key_here
+CACHING=false
 ENABLE_BACKEND_ACCESS_CONTROL=false
-DATA_ROOT_DIRECTORY=C:\Users\YOUR_NAME\mnemo-ai\data_storage
-SYSTEM_ROOT_DIRECTORY=C:\Users\YOUR_NAME\mnemo-ai\cognee_system
 ```
 
 ---
@@ -272,6 +284,7 @@ mnemo-ai/
 ├── .gitignore
 ├── requirements.txt
 ├── README.md
+├── .python-version           # Python version for Render
 ├── templates/
 │   ├── landing.html          # Landing page + Solar Memory logo
 │   ├── dashboard.html        # Main dashboard
@@ -325,6 +338,26 @@ Full interactive documentation available at `/api-docs`
 5. **₹0 budget** — built with free tools
 6. **Solo developer** — 7 days of focused building
 7. **PWA + Voice + Notifications** — modern web experience
+8. **Live Demo** — Fully deployed and accessible
+
+---
+
+## 🌐 **Deployment**
+
+This app is deployed on **Render.com** and is live at:
+
+**[https://mnemo-ai.onrender.com](https://mnemo-ai.onrender.com)**
+
+### Deployment Commands:
+
+```bash
+# Push to GitHub
+git add .
+git commit -m "Deploy to Render"
+git push origin main
+
+# Render will auto-deploy
+```
 
 ---
 
